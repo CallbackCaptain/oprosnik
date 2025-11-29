@@ -1,14 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Oprosnik Helper",
-  "version": "4.3.2",
-  "description": "Помогает с заполнением опросника, копирует данные из файнес.",
+  "version": "5.0.0",
+  "description": "Помогает с заполнением опросника, копирует данные из Finesse.",
   "permissions": [
     "alarms",
     "storage",
     "tabs",
-    "scripting",
-    "notifications"
+    "scripting"
   ],
   "host_permissions": [
     "https://ctp.rt.ru/*",
@@ -28,20 +27,13 @@
   "content_scripts": [
     {
       "matches": ["https://ctp.rt.ru/quiz*"],
-      "js": [
-        "scripts/sidebar-hider.js",
-        "scripts/form-modifier.js",
-        "scripts/filler.js"
-      ],
-      
-      "css": [
-        "css/sidebar-hider.css",
-        "css/form-modifier.css"],
+      "js": ["scripts/survey-page.js"],
+      "css": ["css/styles.css"],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://ssial000ap008.si.rt.ru:8445/desktop/container/?locale=ru_RU*"],
-      "js": ["scripts/parser.js"],
+      "matches": ["https://ssial000ap008.si.rt.ru:8445/desktop/container/*"],
+      "js": ["scripts/finesse-page.js"],
       "run_at": "document_idle"
     }
   ],

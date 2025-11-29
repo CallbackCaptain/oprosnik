@@ -1,184 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Oprosnik Helper</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-size: 14px;
-            background: #fff;
-        }
-        
-        /* Tailwind CSS-like utility classes */
-        .w-2 { width: 0.5rem; }
-        .h-2 { height: 0.5rem; }
-        .w-3 { width: 0.75rem; }
-        .h-3 { height: 0.75rem; }
-        .w-4 { width: 1rem; }
-        .h-4 { height: 1rem; }
-        .w-5 { width: 1.25rem; }
-        .h-5 { height: 1.25rem; }
-        .w-6 { width: 1.5rem; }
-        .h-6 { height: 1.5rem; }
-        .w-12 { width: 3rem; }
-        .h-12 { height: 3rem; }
-        .w-24 { width: 6rem; }
-        .w-96 { width: 24rem; }
-        .h-6 { height: 1.5rem; }
-        .h-80 { height: 20rem; }
-        .h-96 { height: 24rem; }
-        
-        .flex { display: flex; }
-        .items-center { align-items: center; }
-        .items-start { align-items: flex-start; }
-        .justify-center { justify-content: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-1 { gap: 0.25rem; }
-        .gap-2 { gap: 0.5rem; }
-        .gap-3 { gap: 0.75rem; }
-        .gap-4 { gap: 1rem; }
-        
-        .p-2 { padding: 0.5rem; }
-        .p-3 { padding: 0.75rem; }
-        .p-4 { padding: 1rem; }
-        .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
-        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
-        .px-4 { padding-left: 1rem; padding-right: 1rem; }
-        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
-        .pl-10 { padding-left: 2.5rem; }
-        .pr-3 { padding-right: 0.75rem; }
-        .pt-4 { padding-top: 1rem; }
-        .mt-1 { margin-top: 0.25rem; }
-        .mt-2 { margin-top: 0.5rem; }
-        .mt-3 { margin-top: 0.75rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mt-6 { margin-top: 1.5rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-3 { margin-bottom: 0.75rem; }
-        .ml-auto { margin-left: auto; }
-        .mx-auto { margin-left: auto; margin-right: auto; }
-        
-        .space-y-1 > * + * { margin-top: 0.25rem; }
-        .space-y-2 > * + * { margin-top: 0.5rem; }
-        .space-y-3 > * + * { margin-top: 0.75rem; }
-        .space-y-4 > * + * { margin-top: 1rem; }
-        
-        .bg-white { background-color: #ffffff; }
-        .bg-gray-50 { background-color: #f9fafb; }
-        .bg-gray-100 { background-color: #f3f4f6; }
-        .bg-gray-200 { background-color: #e5e7eb; }
-        .bg-blue-50 { background-color: #eff6ff; }
-        .bg-blue-500 { background-color: #3b82f6; }
-        .bg-blue-600 { background-color: #2563eb; }
-        .bg-green-500 { background-color: #10b981; }
-        .bg-red-500 { background-color: #ef4444; }
-        .bg-yellow-50 { background-color: #fffbeb; }
-        
-        .text-white { color: #ffffff; }
-        .text-gray-500 { color: #6b7280; }
-        .text-gray-600 { color: #4b5563; }
-        .text-gray-700 { color: #374151; }
-        .text-gray-800 { color: #1f2937; }
-        .text-blue-500 { color: #3b82f6; }
-        .text-blue-600 { color: #2563eb; }
-        .text-green-500 { color: #10b981; }
-        .text-green-600 { color: #059669; }
-        .text-red-600 { color: #dc2626; }
-        .text-purple-500 { color: #8b5cf6; }
-        .text-yellow-600 { color: #d97706; }
-        .text-yellow-800 { color: #92400e; }
-        
-        .text-xs { font-size: 0.75rem; line-height: 1rem; }
-        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-        
-        .font-medium { font-weight: 500; }
-        .font-semibold { font-weight: 600; }
-        
-        .border { border-width: 1px; }
-        .border-b { border-bottom-width: 1px; }
-        .border-b-2 { border-bottom-width: 2px; }
-        .border-gray-200 { border-color: #e5e7eb; }
-        .border-blue-200 { border-color: #bfdbfe; }
-        .border-blue-600 { border-color: #2563eb; }
-        .border-yellow-200 { border-color: #fef3c7; }
-        
-        .rounded { border-radius: 0.25rem; }
-        .rounded-lg { border-radius: 0.5rem; }
-        .rounded-full { border-radius: 9999px; }
-        
-        .opacity-30 { opacity: 0.3; }
-        .opacity-90 { opacity: 0.9; }
-        
-        .flex-1 { flex: 1 1 0%; }
-        .flex-shrink-0 { flex-shrink: 0; }
-        
-        .overflow-y-auto { overflow-y: auto; }
-        .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        
-        .transition-colors { transition-property: color, background-color, border-color; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
-        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
-        
-        .hover\\:bg-gray-50:hover { background-color: #f9fafb; }
-        .hover\\:bg-gray-200:hover { background-color: #e5e7eb; }
-        .hover\\:text-gray-800:hover { color: #1f2937; }
-        
-        .focus\\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
-        .focus\\:ring-2:focus { --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color); box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000); }
-        .focus\\:ring-blue-500:focus { --tw-ring-opacity: 1; --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity)); }
-        
-        .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        .animate-spin { animation: spin 1s linear infinite; }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .5; }
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .absolute { position: absolute; }
-        .relative { position: relative; }
-        .left-3 { left: 0.75rem; }
-        .top-0\.5 { top: 0.125rem; }
-        .top-2\.5 { top: 0.625rem; }
-        .right-2 { right: 0.5rem; }
-        
-        .text-center { text-align: center; }
-        
-        button {
-            cursor: pointer;
-            border: none;
-            background: none;
-        }
-        
-        input {
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 0.5rem;
-            width: 100%;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>Oprosnik Helper</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      width: 280px;
+      background: #fff;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 16px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .status {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      font-size: 12px;
+    }
+    
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+    }
+    
+    .dot.active { background: #22c55e; }
+    
+    .content {
+      padding: 16px;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .btn:last-child { margin-bottom: 0; }
+    
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+    
+    .btn-secondary:hover { background: #e5e7eb; }
+    
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    .info {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #64748b;
+    }
+    
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    
+    .info-row:last-child { margin-bottom: 0; }
+    
+    .info-value { 
+      font-weight: 500; 
+      color: #334155;
+    }
+    
+    .icon {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
 </head>
 <body>
-    <div id="popup-root"></div>
-    <script src="popup.js"></script>
+  <div class="header">
+    <h1>📋 Oprosnik Helper v5.0</h1>
+    <div class="status">
+      <div class="status-item">
+        <div class="dot" id="dotMonitor"></div>
+        <span>Мониторинг</span>
+      </div>
+      <div class="status-item">
+        <div class="dot" id="dotFinesse"></div>
+        <span>Finesse</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="content">
+    <button class="btn btn-primary" id="btnOpenSurvey">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+      Открыть опросник
+    </button>
+    
+    <button class="btn btn-secondary" id="btnToggleSidebar">
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+          d="M4 6h16M4 12h16M4 18h7"/>
+      </svg>
+      Скрыть/Показать сайдбар
+    </button>
+    
+    <div class="info">
+      <div class="info-row">
+        <span>Звонков в истории:</span>
+        <span class="info-value" id="callCount">—</span>
+      </div>
+      <div class="info-row">
+        <span>Статус агента:</span>
+        <span class="info-value" id="agentStatus">—</span>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
 </body>
 </html>

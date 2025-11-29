@@ -1,0 +1,174 @@
+/**
+ * styles.css - Объединённые стили для Oprosnik Helper v5.0
+ */
+
+/* ============ КНОПКИ ============ */
+.oprosnik-paste-btn,
+.oprosnik-sidebar-btn {
+  margin-left: 10px !important;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.oprosnik-paste-btn {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.oprosnik-paste-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+.oprosnik-paste-btn:active {
+  transform: translateY(0);
+}
+
+.oprosnik-paste-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+  transform: none !important;
+}
+
+.oprosnik-sidebar-btn {
+  background: #6366f1 !important;
+  border: none !important;
+  color: white !important;
+}
+
+.oprosnik-sidebar-btn:hover {
+  background: #4f46e5 !important;
+}
+
+/* ============ САЙДБАР ============ */
+.sidebar-hidden-by-extension .content-wrapper,
+.sidebar-hidden-by-extension .main-header,
+.sidebar-hidden-by-extension .main-footer {
+  margin-left: 0 !important;
+  transition: none !important;
+}
+
+.sidebar-hidden-by-extension .main-sidebar {
+  display: none !important;
+}
+
+/* ============ МОДАЛЬНОЕ ОКНО ============ */
+.oprosnik-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.oprosnik-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.oprosnik-modal h3 {
+  margin: 0 0 4px 0;
+  color: #1f2937;
+  font-size: 18px;
+}
+
+.oprosnik-modal .subtitle {
+  color: #6b7280;
+  margin: 0 0 16px 0;
+  font-size: 14px;
+}
+
+.oprosnik-modal .call-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.oprosnik-modal .call-item {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.oprosnik-modal .call-item:hover {
+  border-color: #22c55e;
+  background: #f0fdf4;
+}
+
+.oprosnik-modal .call-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.oprosnik-modal .phone {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.oprosnik-modal .badge {
+  background: #22c55e;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.oprosnik-modal .call-details {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.oprosnik-modal .call-time {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.oprosnik-modal .close-btn {
+  width: 100%;
+  padding: 10px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #4b5563;
+  transition: background 0.2s;
+}
+
+.oprosnik-modal .close-btn:hover {
+  background: #e5e7eb;
+}
