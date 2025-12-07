@@ -1,22 +1,24 @@
 /**
- * background.js - v5.0 Оптимизированная версия
+ * background.js - v5.1 Refactored
  * Мониторинг Cisco Finesse и управление данными звонков
+ * @module background
  */
 
-console.log('🚀 Oprosnik Helper v5.0 - Background Service Worker');
+// Import centralized config
+importScripts('config.js');
 
-// ============ КОНФИГУРАЦИЯ ============
-const CONFIG = {
-  FINESSE_URL: 'https://ssial000ap008.si.rt.ru:8445/desktop/container/*',
-  MAX_HISTORY: 10,
-  CHECK_INTERVAL_MS: 3000,
-  ACTIVE_CALL_INTERVAL_MS: 1000,
-  POST_CALL_ATTEMPTS: 3,
-  POST_CALL_DELAY_MS: 100
-};
+/** @type {typeof OPROSNIK_CONFIG} */
+const CONFIG = globalThis.OPROSNIK_CONFIG;
+
+console.log(`🚀 ${CONFIG.NAME} v${CONFIG.VERSION} - Background Service Worker`);
 
 // ============ УТИЛИТЫ ============
 const Utils = {
+  /**
+   * Formats milliseconds to HH:MM:SS string
+   * @param {number} ms - Duration in milliseconds
+   * @returns {string} Formatted duration string
+   */
   formatDuration(ms) {
     const s = Math.floor(ms / 1000);
     const h = Math.floor(s / 3600);
@@ -24,7 +26,13 @@ const Utils = {
     const sec = s % 60;
     return [h, m, sec].map(v => String(v).padStart(2, '0')).join(':');
   },
-  
+
+  /**
+   * Logs a message with emoji prefix
+   * @param {string} emoji - Emoji prefix
+   * @param {string} message - Log message
+   * @param {*} [data] - Optional data to log
+   */
   log(emoji, message, data = null) {
     const args = [`${emoji} ${message}`];
     if (data) args.push(data);
@@ -33,18 +41,34 @@ const Utils = {
 };
 
 // ============ ФУНКЦИИ ИЗВЛЕЧЕНИЯ ДАННЫХ (выполняются в контексте страницы) ============
+
+/**
+ * @typedef {Object} CallData
+ * @property {string|null} phone - Phone number
+ * @property {string|null} duration - Call duration in HH:MM:SS format
+ * @property {string|null} region - Region name
+ */
+
+/**
+ * Extracts agent status from Finesse UI (runs in page context)
+ * @returns {string|null} Agent status text
+ */
 function extractAgentStatus() {
   const el = document.querySelector('#voice-state-select-headerOptionText');
   return el?.textContent?.trim() || null;
 }
 
+/**
+ * Extracts call data from Finesse UI (runs in page context)
+ * @returns {CallData} Call data object
+ */
 function extractCallData() {
   const result = { phone: null, duration: null, region: null };
-  
+
   // Телефон
   const phoneEl = document.querySelector('[aria-label*="Участник"]');
   if (phoneEl) result.phone = phoneEl.textContent.trim();
-  
+
   // Длительность - ищем элемент с форматом ЧЧ:ММ:СС
   const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
   const selectors = [
@@ -52,7 +76,7 @@ function extractCallData() {
     '[class*="timer-timer"]',
     '[id*="call-timer"]'
   ];
-  
+
   for (const sel of selectors) {
     const el = document.querySelector(sel);
     if (el?.textContent && timeRegex.test(el.textContent.trim())) {
@@ -60,7 +84,7 @@ function extractCallData() {
       break;
     }
   }
-  
+
   // Если не нашли по селекторам - полный поиск
   if (!result.duration) {
     for (const el of document.querySelectorAll('*')) {
@@ -71,24 +95,36 @@ function extractCallData() {
       }
     }
   }
-  
+
   // Регион
-  const regionEl = document.querySelector('[class*="callVariableValue"] span') 
+  const regionEl = document.querySelector('[class*="callVariableValue"] span')
     || document.querySelector('[id*="call-header-variable-value"]');
   if (regionEl) result.region = regionEl.textContent.trim();
-  
+
   return result;
 }
 
 // ============ КЛАСС МОНИТОРА ============
+
+/**
+ * Monitors Cisco Finesse for agent status and call data
+ * @class
+ */
 class FinesseMonitor {
   constructor() {
+    /** @type {number|null} */
     this.tabId = null;
+    /** @type {boolean} */
     this.isActive = false;
+    /** @type {string|null} */
     this.lastStatus = null;
+    /** @type {boolean} */
     this.isInCall = false;
+    /** @type {number|null} */
     this.callStartTime = null;
+    /** @type {CallData|null} */
     this.currentCallData = null;
+    /** @type {Array<Object>} */
     this.callHistory = [];
   }
   
@@ -197,32 +233,35 @@ class FinesseMonitor {
   
   async captureAndSave() {
     Utils.log('🔄', 'Захват финальных данных...');
-    
-    const calculatedDuration = Utils.formatDuration(Date.now() - this.callStartTime);
-    
+
+    const callEndTime = Date.now();
+    const calculatedDuration = Utils.formatDuration(callEndTime - this.callStartTime);
+
     // Быстрые попытки захвата из интерфейса
     for (let i = 0; i < CONFIG.POST_CALL_ATTEMPTS; i++) {
       await this.captureCallData();
-      
-      const hasDuration = this.currentCallData?.duration 
+
+      const hasDuration = this.currentCallData?.duration
         && this.currentCallData.duration !== '00:00:00';
-      
+
       if (hasDuration) {
         Utils.log('✅', 'Данные из интерфейса получены');
         break;
       }
-      
+
       await new Promise(r => setTimeout(r, CONFIG.POST_CALL_DELAY_MS));
     }
-    
+
     // Формируем финальные данные
     const callData = {
       phone: this.currentCallData?.phone || 'Неизвестно',
-      duration: this.currentCallData?.duration || calculatedDuration,
+      duration: calculatedDuration,
       region: this.currentCallData?.region || 'Не указан',
+      startTime: this.callStartTime,
+      endTime: callEndTime,
       timestamp: Date.now(),
       capturedAt: new Date().toLocaleTimeString('ru-RU'),
-      source: this.currentCallData?.duration ? 'interface' : 'calculated'
+      source: 'calculated'
     };
     
     // Сохраняем
